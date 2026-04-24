@@ -9,7 +9,12 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libpq-dev
+    libpq-dev \
+    gnupg
+
+# Install Node.js (LTS version)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -20,18 +25,22 @@ RUN docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy custom FPM configuration
-COPY .docker/php/php-fpm.d/zzz-custom.conf /usr/local/etc/php-fpm.d/zzz-custom.conf
-
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www/html
+# Copy application files
+COPY . .
 
-# Fix permissions for storage, cache, and temp
-RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache /tmp \
+# Install dependencies (Composer & NPM) and Build Assets
+RUN composer install --no-interaction --optimize-autoloader --no-dev \
+    && npm install \
+    && npm run build
+
+# Copy custom FPM configuration
+COPY .docker/php/php-fpm.d/zzz-custom.conf /usr/local/etc/php-fpm.d/zzz-custom.conf
+
+# Fix permissions
+RUN chown -R www-data:www-data /var/www/html /tmp \
     && chmod -R 775 storage bootstrap/cache
 
 USER www-data
