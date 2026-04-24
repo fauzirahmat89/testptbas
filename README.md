@@ -8,7 +8,7 @@ Proyek ini adalah aplikasi Laravel yang dikonfigurasi dengan Docker untuk lingku
 - **PHP Engine:** PHP 8.3-fpm (Dynamic Workers: 5 - 20)
 - **Cache & Queue:** Redis (Port 8099)
 - **Background Jobs:** Dedicated Queue Worker container
-- **Database:** Local Database (menggunakan `host.docker.internal`)
+- **Database:** MySQL 8.0 (Port 3306) di dalam Docker
 
 ## Prasyarat
 - Docker dan Docker Compose terpasang di mesin Anda.
@@ -22,7 +22,8 @@ Proyek ini adalah aplikasi Laravel yang dikonfigurasi dengan Docker untuk lingku
 
 2. **Setup Environment**
    Pengaturan utama untuk Docker di file `.env`:
-   - `DB_HOST=host.docker.internal`
+   - `DB_HOST=db`
+   - `DB_PASSWORD=root`
    - `REDIS_HOST=redis`
    - `QUEUE_CONNECTION=redis`
 
