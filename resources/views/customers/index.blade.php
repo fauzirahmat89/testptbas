@@ -50,6 +50,7 @@
                                 <th>Email</th>
                                 <th>Status</th>
                                 <th>Created At</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,11 +116,56 @@
                     { data: 'user_id', name: 'user_id' },
                     { data: 'name', name: 'name' },
                     { data: 'email', name: 'email' },
-                    { data: 'status', name: 'status' },
-                    { data: 'created_at', name: 'created_at' }
+                    { data: 'status', name: 'status', orderable: false, searchable: false },
+                    { data: 'created_at', name: 'created_at' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false }
                 ],
                 order: [[4, 'desc']]
-            });
+                });
+
+                window.makeLoyal = function(id) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to upgrade this customer to LOYAL!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonClass: 'btn btn-primary w-xs me-2 mt-2',
+                    cancelButtonClass: 'btn btn-danger w-xs mt-2',
+                    confirmButtonText: 'Yes, upgrade it!',
+                    buttonsStyling: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function() {
+                        return $.ajax({
+                            url: "{{ url('customers') }}/" + id + "/change-status",
+                            type: "POST",
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            }
+                        });
+                    },
+                    allowOutsideClick: false
+                }).then(function(result) {
+                    if (result.isConfirmed && result.value.success) {
+                        Swal.fire({
+                            title: 'Upgraded!',
+                            text: result.value.message,
+                            icon: 'success',
+                            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                            buttonsStyling: false
+                        });
+                        table.ajax.reload();
+                    } else if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Failed!',
+                            text: result.value.message || 'Something went wrong',
+                            icon: 'error',
+                            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                            buttonsStyling: false
+                        });
+                    }
+                });
+                }
+
 
             $('#addCustomerForm').on('submit', function(e) {
                 e.preventDefault();

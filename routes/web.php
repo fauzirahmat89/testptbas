@@ -23,5 +23,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [CustomerController::class, 'index'])->name('index');
         Route::get('/data', [CustomerController::class, 'data'])->name('data');
         Route::post('/', [CustomerController::class, 'store'])->name('store');
+        Route::post('/{id}/change-status', [CustomerController::class, 'changeStatus'])->name('change-status');
     });
 });
