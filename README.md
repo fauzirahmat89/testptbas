@@ -44,6 +44,7 @@ Proyek ini menggunakan Redis untuk mengelola antrean. Layanan `worker` akan berj
   ```
 - **Restart Worker (setelah perubahan kode):**
   ```bash
+  docker compose exec app php artisan optimize:clear
   docker-compose restart worker
   ```
 

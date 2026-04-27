@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -13,7 +14,7 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             $users = User::query();
-            return datatables()->of($users)
+            return DataTables::of($users)
                 ->addColumn('action', function ($user) {
                     $btn = '<ul class="list-inline hstack gap-2 mb-0">
                                 <li class="list-inline-item edit" title="Edit">

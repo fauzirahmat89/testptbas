@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use App\Mail\WelcomeCustomerMail;
+use Illuminate\Support\Facades\Mail;
 
 class CustomerController extends Controller
 {
@@ -22,6 +24,9 @@ class CustomerController extends Controller
                 $class = $customer->status == 'LOYAL CUSTOMER' ? 'bg-success' : 'bg-info';
                 return '<span class="badge ' . $class . '">' . $customer->status . '</span>';
             })
+            ->editColumn('created_at', function ($customer) {
+                return $customer->created_at ? $customer->created_at->format('d M, Y H:i') : '-';
+            })
             ->rawColumns(['status'])
             ->make(true);
     }
@@ -36,9 +41,13 @@ class CustomerController extends Controller
         try {
             $validated['status'] = 'NEW CUSTOMER';
             $customer = Customer::create($validated);
+
+            // Kirim email menggunakan Queue
+            Mail::to($customer->email)->queue(new WelcomeCustomerMail($customer));
+
             return response()->json([
                 'success' => true,
-                'message' => 'Customer created successfully',
+                'message' => 'Customer created successfully and welcome email queued.',
                 'data' => $customer
             ]);
         } catch (\Exception $e) {
