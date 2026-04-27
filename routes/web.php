@@ -2,10 +2,11 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect()->route('customers.index');
+    return redirect()->route('users.index');
 });
 
 Route::middleware('guest')->group(function () {
@@ -15,8 +16,12 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-Route::middleware('auth')->prefix('customers')->name('customers.')->group(function () {
-    Route::get('/', [CustomerController::class, 'index'])->name('index');
-    Route::get('/data', [CustomerController::class, 'data'])->name('data');
-    Route::post('/', [CustomerController::class, 'store'])->name('store');
+Route::middleware('auth')->group(function () {
+    Route::resource('users', UserController::class);
+
+    Route::prefix('customers')->name('customers.')->group(function () {
+        Route::get('/', [CustomerController::class, 'index'])->name('index');
+        Route::get('/data', [CustomerController::class, 'data'])->name('data');
+        Route::post('/', [CustomerController::class, 'store'])->name('store');
+    });
 });
