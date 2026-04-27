@@ -35,6 +35,9 @@
                     <div class="d-flex align-items-center">
                         <h5 class="card-title mb-0 flex-grow-1">Customer List</h5>
                         <div class="flex-shrink-0">
+                            <button class="btn btn-info" onclick="sendEmail()">
+                                <i class="ri-mail-send-line align-bottom me-1"></i> Send Email to All
+                            </button>
                             <button class="btn btn-primary add-btn" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
                                 <i class="ri-add-line align-bottom me-1"></i> Add Customer
                             </button>
@@ -166,8 +169,78 @@
                 });
                 }
 
+                window.sendEmail = function(id = null) {
+                let title = id ? 'Send email to this customer?' : 'Send emails to ALL customers?';
+                Swal.fire({
+                    title: title,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonClass: 'btn btn-info w-xs me-2 mt-2',
+                    cancelButtonClass: 'btn btn-danger w-xs mt-2',
+                    confirmButtonText: 'Yes, send!',
+                    buttonsStyling: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function() {
+                        return $.ajax({
+                            url: "{{ route('customers.send-email') }}",
+                            type: "POST",
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                user_id: id
+                            }
+                        });
+                    },
+                    allowOutsideClick: false
+                }).then(function(result) {
+                    if (result.isConfirmed && result.value.success) {
+                        Swal.fire({
+                            title: 'Sent!',
+                            text: result.value.message,
+                            icon: 'success',
+                            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                            buttonsStyling: false
+                        });
+                    }
+                });
+                }
 
-            $('#addCustomerForm').on('submit', function(e) {
+                window.deleteCustomer = function(id) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonClass: 'btn btn-danger w-xs me-2 mt-2',
+                    cancelButtonClass: 'btn btn-light w-xs mt-2',
+                    confirmButtonText: 'Yes, delete it!',
+                    buttonsStyling: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function() {
+                        return $.ajax({
+                            url: "{{ url('customers') }}/" + id,
+                            type: "DELETE",
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            }
+                        });
+                    },
+                    allowOutsideClick: false
+                }).then(function(result) {
+                    if (result.isConfirmed && result.value.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: result.value.message,
+                            icon: 'success',
+                            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                            buttonsStyling: false
+                        });
+                        table.ajax.reload();
+                    }
+                });
+                }
+
+
+                $('#addCustomerForm').on('submit', function(e) {
                 e.preventDefault();
                 
                 var formData = $(this).serialize();

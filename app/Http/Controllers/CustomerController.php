@@ -29,15 +29,45 @@ class CustomerController extends Controller
                 return $customer->created_at ? $customer->created_at->format('d M, Y H:i') : '-';
             })
             ->addColumn('action', function ($customer) {
+                $btn = '<div class="hstack gap-2">';
                 if ($customer->status == 'NEW CUSTOMER') {
-                    return '<button class="btn btn-sm btn-soft-success" onclick="makeLoyal(\'' . $customer->user_id . '\')">
-                                <i class="ri-user-star-line align-bottom me-1"></i> Make Loyal
+                    $btn .= '<button class="btn btn-sm btn-soft-success" onclick="makeLoyal(\'' . $customer->user_id . '\')">
+                                <i class="ri-user-star-line align-bottom"></i> Make Loyal
                             </button>';
+                } else {
+                    $btn .= '<button class="btn btn-sm btn-light disabled">Loyal</button>';
                 }
-                return '<button class="btn btn-sm btn-light disabled">Already Loyal</button>';
+                
+                $btn .= '<button class="btn btn-sm btn-soft-info" onclick="sendEmail(\'' . $customer->user_id . '\')">
+                            <i class="ri-mail-send-line align-bottom"></i> Send Email
+                        </button>';
+                $btn .= '<button class="btn btn-sm btn-soft-danger" onclick="deleteCustomer(\'' . $customer->user_id . '\')">
+                            <i class="ri-delete-bin-line align-bottom"></i> Delete
+                        </button>';
+                $btn .= '</div>';
+                
+                return $btn;
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $customer = Customer::findOrFail($id);
+            $customer->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer deleted successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function changeStatus(Request $request, $id)
@@ -60,6 +90,24 @@ class CustomerController extends Controller
                 'message' => 'Error: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function sendEmail(Request $request)
+    {
+        $userId = $request->user_id;
+        
+        if ($userId) {
+            \Illuminate\Support\Facades\Artisan::call('email:send-status', ['--user_id' => $userId]);
+            $message = 'Email sent to specific customer.';
+        } else {
+            \Illuminate\Support\Facades\Artisan::call('email:send-status');
+            $message = 'Emails sent to all customers.';
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $message
+        ]);
     }
 
     public function store(Request $request)

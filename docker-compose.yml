@@ -44,6 +44,24 @@ services:
     networks:
       - laravel
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - app
+      - redis
+      - db
+    command: php artisan schedule:work
+    networks:
+      - laravel
+
   redis:
     image: redis:alpine
     ports:
