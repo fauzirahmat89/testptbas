@@ -29,7 +29,7 @@ Proyek ini adalah aplikasi Laravel yang dikonfigurasi dengan Docker untuk lingku
 
 3. **Build dan Jalankan Container**
    ```bash
-   docker-compose up -d --build
+   docker compose up -d --build
    ```
 
 4. **Akses Aplikasi**
@@ -45,14 +45,15 @@ Proyek ini menggunakan Redis untuk mengelola antrean. Layanan `worker` akan berj
 - **Restart Worker (setelah perubahan kode):**
   ```bash
   docker compose exec app php artisan optimize:clear
-  docker-compose restart worker
+  docker compose restart worker
   ```
 
 ## Perintah Artisan (Inside Docker)
 Gunakan `docker-compose exec app` untuk menjalankan perintah di kontainer utama:
 ```bash
-docker-compose exec app php artisan migrate
-docker-compose exec app php artisan tinker
+docker compose exec app php artisan migrate
+docker compose exec app php artisan tinker
+docker compose exec app php artisan email:send
 ```
 
 ## Konfigurasi Khusus
