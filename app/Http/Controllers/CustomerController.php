@@ -30,11 +30,11 @@ class CustomerController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'status' => 'required|in:NEW CUSTOMER,LOYAL CUSTOMER',
+            'email' => 'required|email|max:255'
         ]);
 
         try {
+            $validated['status'] = 'NEW CUSTOMER';
             $customer = Customer::create($validated);
             return response()->json([
                 'success' => true,

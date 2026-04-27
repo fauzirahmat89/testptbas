@@ -80,15 +80,6 @@
                             <label for="email" class="form-label">Email</label>
                             <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required />
                         </div>
-
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-select" id="status" name="status" required>
-                                <option value="">Select Status</option>
-                                <option value="NEW CUSTOMER">NEW CUSTOMER</option>
-                                <option value="LOYAL CUSTOMER">LOYAL CUSTOMER</option>
-                            </select>
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <div class="hstack gap-2 justify-content-end">
@@ -116,19 +107,6 @@
 
     <script>
         $(document).ready(function() {
-            var statusChoices;
-            
-            // Initialize Choices.js when modal is shown to fix width calculation issues
-            $('#addCustomerModal').on('shown.bs.modal', function () {
-                if (!statusChoices) {
-                    var element = document.getElementById('status');
-                    statusChoices = new Choices(element, {
-                        searchEnabled: false,
-                        shouldSort: false,
-                    });
-                }
-            });
-
             var table = $('#customer-table').DataTable({
                 processing: true,
                 serverSide: true,
@@ -160,10 +138,6 @@
                         if (response.success) {
                             $('#addCustomerModal').modal('hide');
                             $('#addCustomerForm')[0].reset();
-                            if (statusChoices) {
-                                statusChoices.destroy();
-                                statusChoices = null;
-                            }
                             table.ajax.reload();
                             
                             // Re-initialize choices if needed, but usually reset is enough
