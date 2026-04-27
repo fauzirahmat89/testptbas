@@ -8,4 +8,4 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('email:send-status')->cron('*/' . env('AUTO_EMAIL_INTERVAL', 1) . ' * * * *');
+Schedule::command('email:send')->cron('*/' . env('AUTO_EMAIL_INTERVAL', 1) . ' * * * *');

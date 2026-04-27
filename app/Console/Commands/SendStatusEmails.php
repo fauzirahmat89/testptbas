@@ -15,7 +15,7 @@ class SendStatusEmails extends Command
      *
      * @var string
      */
-    protected $signature = 'email:send-status {--user_id= : The ID of the customer to send email to}';
+    protected $signature = 'email:send {--user_id= : The ID of the customer to send email to}';
 
     /**
      * The console command description.

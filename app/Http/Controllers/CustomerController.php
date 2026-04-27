@@ -97,10 +97,10 @@ class CustomerController extends Controller
         $userId = $request->user_id;
         
         if ($userId) {
-            \Illuminate\Support\Facades\Artisan::call('email:send-status', ['--user_id' => $userId]);
+            \Illuminate\Support\Facades\Artisan::call('email:send', ['--user_id' => $userId]);
             $message = 'Email sent to specific customer.';
         } else {
-            \Illuminate\Support\Facades\Artisan::call('email:send-status');
+            \Illuminate\Support\Facades\Artisan::call('email:send');
             $message = 'Emails sent to all customers.';
         }
 
