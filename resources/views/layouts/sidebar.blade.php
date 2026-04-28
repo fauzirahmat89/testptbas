@@ -32,6 +32,11 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ route('dashboard') }}">
+                        <i class="mdi mdi-speedometer"></i> <span data-key="t-dashboards">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('customers.index') }}">
                         <i class="mdi mdi-account-group-outline"></i> <span data-key="t-customers">Customers</span>
                     </a>
