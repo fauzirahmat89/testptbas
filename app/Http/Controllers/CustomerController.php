@@ -8,9 +8,17 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Mail\WelcomeCustomerMail;
 use App\Mail\LoyalCustomerMail;
 use Illuminate\Support\Facades\Mail;
+use App\Services\TelegramService;
 
 class CustomerController extends Controller
 {
+    protected $telegramService;
+
+    public function __construct(TelegramService $telegramService)
+    {
+        $this->telegramService = $telegramService;
+    }
+
     public function index()
     {
         return view('customers.index');
@@ -76,6 +84,13 @@ class CustomerController extends Controller
             $customer = Customer::findOrFail($id);
             $customer->status = 'LOYAL CUSTOMER';
             $customer->save();
+
+            // Send Telegram Notification
+            $message = "<b>Customer Status Updated</b>\n\n";
+            $message .= "Name: {$customer->name}\n";
+            $message .= "Email: {$customer->email}\n";
+            $message .= "Status: <b>LOYAL CUSTOMER</b>";
+            $this->telegramService->sendMessage($message);
 
             // Kirim email Loyal menggunakan Queue
             Mail::to($customer->email)->queue(new LoyalCustomerMail($customer));

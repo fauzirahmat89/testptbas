@@ -54,6 +54,7 @@ Gunakan `docker-compose exec app` untuk menjalankan perintah di kontainer utama:
 docker compose exec app php artisan migrate
 docker compose exec app php artisan tinker
 docker compose exec app php artisan email:send
+docker compose exec app php artisan schedule:list
 ```
 
 ## Konfigurasi Khusus
