@@ -34,7 +34,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Install dependencies (Composer & NPM) and Build Assets
-RUN composer install --no-interaction --optimize-autoloader --no-dev \
+RUN composer install --no-interaction --optimize-autoloader \
     && npm install \
     && npm run build
 

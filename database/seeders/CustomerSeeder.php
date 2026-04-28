@@ -16,6 +16,7 @@ class CustomerSeeder extends Seeder
         ];
 
         foreach ($customers as $customer) {
+            $customer['user_id'] = Customer::generateUserId();
             Customer::create($customer);
         }
     }

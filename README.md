@@ -52,6 +52,8 @@ Proyek ini menggunakan Redis untuk mengelola antrean. Layanan `worker` akan berj
 Gunakan `docker-compose exec app` untuk menjalankan perintah di kontainer utama:
 ```bash
 docker compose exec app php artisan migrate
+docker compose exec app php artisan migrate --seed
+docker compose exec app php artisan migrate:fresh --seed
 docker compose exec app php artisan tinker
 docker compose exec app php artisan email:send
 docker compose exec app php artisan schedule:list
